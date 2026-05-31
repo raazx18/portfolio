@@ -1,55 +1,120 @@
 const roles = [
-"Full Stack Developer",
-"Cybersecurity Enthusiast",
-"React Developer",
-"Problem Solver",
-"Computer Science Student"
+    "Full Stack Developer",
+    "Android Developer",
+    "MERN Stack Developer",
+    "React.js Developer",
+    "Cyber Security Enthusiast",
+    "Problem Solver"
 ];
 
 let roleIndex = 0;
 let charIndex = 0;
+let isDeleting = false;
 
-const typing = document.getElementById("typing");
+const typingElement = document.getElementById("typing");
 
-function typeEffect(){
+function typeEffect() {
 
-    if(charIndex < roles[roleIndex].length){
+    const currentRole = roles[roleIndex];
 
-        typing.textContent += roles[roleIndex].charAt(charIndex);
+    if (!isDeleting) {
+
+        typingElement.textContent =
+            currentRole.substring(0, charIndex + 1);
 
         charIndex++;
 
-        setTimeout(typeEffect,100);
+        if (charIndex === currentRole.length) {
 
-    }else{
+            isDeleting = true;
 
-        setTimeout(eraseEffect,1500);
-    }
-}
+            setTimeout(typeEffect, 1500);
 
-function eraseEffect(){
+            return;
+        }
 
-    if(charIndex > 0){
+    } else {
 
-        typing.textContent =
-        roles[roleIndex].substring(0,charIndex-1);
+        typingElement.textContent =
+            currentRole.substring(0, charIndex - 1);
 
         charIndex--;
 
-        setTimeout(eraseEffect,50);
+        if (charIndex === 0) {
 
-    }else{
+            isDeleting = false;
 
-        roleIndex++;
+            roleIndex++;
 
-        if(roleIndex >= roles.length){
-            roleIndex = 0;
+            if (roleIndex >= roles.length) {
+                roleIndex = 0;
+            }
         }
-
-        setTimeout(typeEffect,300);
     }
+
+    setTimeout(typeEffect, isDeleting ? 50 : 100);
 }
 
-document.addEventListener("DOMContentLoaded",()=>{
+document.addEventListener("DOMContentLoaded", () => {
+
     typeEffect();
+
+    // Smooth fade animation on scroll
+
+    const sections = document.querySelectorAll("section");
+
+    const observer = new IntersectionObserver(
+        (entries) => {
+
+            entries.forEach((entry) => {
+
+                if (entry.isIntersecting) {
+
+                    entry.target.classList.add("show");
+                }
+            });
+
+        },
+        {
+            threshold: 0.15
+        }
+    );
+
+    sections.forEach((section) => {
+
+        section.classList.add("hidden");
+
+        observer.observe(section);
+    });
+
+});
+
+// Active Navbar Highlight
+
+const navLinks = document.querySelectorAll("nav ul li a");
+
+window.addEventListener("scroll", () => {
+
+    let current = "";
+
+    document.querySelectorAll("section").forEach((section) => {
+
+        const sectionTop = section.offsetTop - 150;
+
+        if (pageYOffset >= sectionTop) {
+            current = section.getAttribute("id");
+        }
+    });
+
+    navLinks.forEach((link) => {
+
+        link.classList.remove("active");
+
+        if (
+            link.getAttribute("href") === "#" + current
+        ) {
+            link.classList.add("active");
+        }
+    });
+
 });
